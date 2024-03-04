@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tabla del Asado y Compras</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+      width: 80%;
+      background-color: rgb(166, 142, 184);
+      border: 1px solid #dddddd;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+    }
+    th {
+      background-color: #dddddd;
+      font-weight: bold;
+      text-align: center;
+    }
+    td {
+      text-align: center;
+    }
+    .btn-eliminar {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      transition-duration: 0.4s;
+      border-radius: 4px;
+    }
+    .btn-eliminar:hover {
+    background-color: #ff3333;
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 30px;
+  }
+
+  form {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    border-radius: 4px;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+  </style>
+</head>
+<body>
+  <h1>Tabla del asado</h1>
+
+  <form id="myForm">
+    <label for="Alimento">alimento:</label>
+    <input type="text" id="dato1" required><br><br>
+    <label for="Presentacion">Presentacion:</label>
+    <input type="text" id="dato2" required><br><br>
+    <label for="Unidades">Unidades Por Presentacion:</label>
+    <input type="number" id="dato3" required><br><br>
+    <label for="Por persona">por persona:</label>
+    <input type="number" id="dato4" required><br><br>
+    <label for="Valor">valor:</label>
+    <input type="number" id="dato5" required><br><br>
+    <label for="personas">Personas:</label>
+    <input type="number" id="dato6" required><br><br>
+
+    <button type="button" onclick="agregarFila()">Agregar</button>
+  </form>
+
+  <table id="tabla">
+    <tr>
+       <th colspan="3">Menu</th>
+       <th rowspan="2">accion</th>
+    </tr>
+
+    <tr>
+      <th>Alimento</th>
+      <th>Presentacion</th>
+      <th>Por persona</th>
+      
+    </tr>
+  </table>
+
+  <!-- Tabla de compras -->
+  <h1>Tabla de compras </h1>
+
+  <table id="tablaCompras">
+    <tr>
+      <th colspan="3">Formas de compra</th>
+      <th rowspan="2">Valor</th>
+    </tr>
+    <tr>
+      <th>Alimeto</th>
+      <th>Presentacion</th>
+      <th>Unidades</th>
+    </tr>
+  </table>
+<!--tabla que calcula total sobrante y valor por persona-->
+  <h1>Tabla Calculadora</h1>
+
+  <table id="tablaCalculadora">
+
+    <tr>
+      <th></th>
+      <th colspan="3">Cantidades</th>
+      <th colspan="2">Valores</th>
+    </tr>
+    
+    <tr>
+      <th>Alimento </th>
+       <th>A Usar</th>
+      <th>A Comprar</th>
+      <th>Sobrante</th>
+      <th>Valor</th>
+      <th>Total</th>
+    </tr>
+  </table>
+  <h2>Costo total del asado: <span id="costoTotal"></span></h2>
+  <h2>Aporte por persona: <span id="aportePersona"></span></h2>
+
+ <!--codigo javascript-->
+  <script >
+  var data = [];
+  
+
+  function agregarFila() {
+    var Alimento = document.getElementById("dato1").value;
+    var Presentacion = document.getElementById("dato2").value;
+    var Unidades = parseFloat(document.getElementById("dato3").value);
+    var Porpersona = parseFloat(document.getElementById("dato4").value);
+    var Valor = parseFloat(document.getElementById("dato5").value); 
+    var Personas = parseFloat (document.getElementById("dato6").value);
+    
+    // Agrega los datos ingresados al arreglo data
+    data.push([Alimento, Presentacion, Porpersona, Valor]);
+  
+    var tabla = document.getElementById("tabla");
+    var fila = tabla.insertRow();
+  
+    var celdaAlimento = fila.insertCell(0);
+    celdaAlimento.innerHTML = Alimento;
+  
+    var celdaPresentacion = fila.insertCell(1);
+    celdaPresentacion.innerHTML = Presentacion;
+  
+    var celdaPorpersona = fila.insertCell(2);
+    celdaPorpersona.innerHTML = Porpersona;
+  
+    var celdaEliminar = fila.insertCell(3);
+    var botonEliminar = document.createElement("button");
+    botonEliminar.innerHTML = "Eliminar";
+    botonEliminar.onclick = function() {
+      tabla.deleteRow(fila.rowIndex);
+      // Aqui agrego una funcion que me parece practica por si deseo eliminar una fila completa 
+      data.splice(fila.rowIndex-2, 1);
+      // Aqui elimino la fila de la segunda tabla
+      tablaCompras.deleteRow(fila.rowIndex);
+      // Aqui elimino la fila de la tercera tabla 
+      tablaCalculadora.deleteRow(fila.rowIndex);
+      
+    
+    };
+    celdaEliminar.appendChild(botonEliminar);
+     // Aqui agrego los mismos datos a la segunda tabla 
+    var tablaCompras = document.getElementById("tablaCompras");
+    var filaCompras = tablaCompras.insertRow();
+  
+    var celdaAlimentoCompras = filaCompras.insertCell(0);
+    celdaAlimentoCompras.innerHTML = Alimento;
+
+    var celdaPresentacionCompras = filaCompras.insertCell(1)
+    celdaPresentacionCompras.innerHTML = Presentacion;
+  
+    var celdaUnidadCompras = filaCompras.insertCell(2);
+    celdaUnidadCompras.innerHTML = Unidades;
+  
+    var celdaValorCompras = filaCompras.insertCell(3);
+    celdaValorCompras.innerHTML = Valor;
+  // agrego nuevos datos en la tabla calculadora 
+    var tablaCalculadora = document.getElementById("tablaCalculadora");
+    var filaCalculadora = tablaCalculadora.insertRow();
+
+
+    var celdaAlimentoCalculadora =filaCalculadora.insertCell(0);
+    celdaAlimentoCalculadora.innerHTML = Alimento;
+
+    var celdaAUsarCalculadora = filaCalculadora.insertCell(1);
+    celdaAUsarCalculadora.innerHTML= Porpersona*Personas;
+
+    var celdaAComprarCalculadora = filaCalculadora.insertCell(2)
+    celdaAComprarCalculadora.innerHTML = Math.ceil((Porpersona* Personas) / Unidades);
+
+    var celdaSobranteCalculadora = filaCalculadora.insertCell(3);
+    celdaSobranteCalculadora.innerHTML = (Unidades *celdaAComprarCalculadora.innerHTML) - (Personas * Porpersona );
+    
+    var celdaValorCalculadora = filaCalculadora.insertCell(4);
+    celdaValorCalculadora.innerHTML = Valor;
+
+    var celdaTotalCalculadora = filaCalculadora.insertCell(5);
+    celdaTotalCalculadora.innerHTML = Math.ceil((Porpersona*Personas)/Unidades)*Valor;
+
+    document.getElementById("myForm").reset();
+    
+    var tablaCalculadora = document.getElementById("tablaCalculadora");
+var filas = tablaCalculadora.rows;
+var totalSuma = 0;
+
+for (var i = 1; i < filas.length; i++) {
+  var celdaTotal = filas[i].cells[5]; 
+  var valorTotal = parseFloat(celdaTotal.innerHTML); 
+
+  if (!isNaN(valorTotal)) { 
+    totalSuma += valorTotal; 
+  }
+}
+
+document.getElementById("costoTotal").innerText = totalSuma.toFixed(2);
+
+var aportePersona = totalSuma / Personas;
+document.getElementById("aportePersona").innerText = aportePersona.toFixed(2);
+  }
+
+ 
+  
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<script>
+    var nombre=""
+    var altura = 0
+    var peso = 0
+    var imc = 0
+    var diagnostico =  ""
+    nombre = prompt("Digite el nombre del paciente: ");
+    altura = parseFloat(prompt("digite la altura del paciente en metros: "));
+    peso = parseFloat(prompt("Digite el peso del paciente en kilogramos: "));
+    imc = peso/Math.pow(altura,2);
+    if (imc >= 40)
+        diagnostico = "obesidad severa"
+    else if (imc >= 30)
+             diagnostico = "Obesidad leve"
+         else if (imc >= 25)
+                  diagnostico = "sobrepeso"
+             else if (imc >= 18.5)
+                      diagnostico="Peso normal"
+                 else if (imc >= 17)
+                         diagnostico = "Delgadez leve"
+                     else if (imc >= 16)
+                              diagnostico="Delgadez moderada"
+                         else diagnostico = "Delgadez severa" 
+    document.writeln("el paciente ",nombre, " mide ",altura," pesa ",peso, " tiene Imc ",imc, " el paciente tiene: ",diagnostico)
+    
+</script>
+

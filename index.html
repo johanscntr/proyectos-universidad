@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro de pacientes</title>
+</head>
+<style>
+    body {
+        font-family: sans-serif;
+        font-size: 16px;
+        color: #333;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th {
+        text-align: left;
+        padding: 8px;
+        background-color: #ccc;
+    }
+
+    td {
+        padding: 8px;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        padding: 8px;
+        border: 1px solid #ccc;
+        background-color: #000;
+        color: #fff;
+    }
+
+</style>
+<link rel="shortcut icon" href="OIP (1).jpeg">
+<body id="datos">
+    <h2>Tabla de Historial</h2>
+    <label for="Nombre">Nombre del paciente:</label>
+    <input type="text" id="Nombre"><br><br>
+    <label for="edad">Edad:</label> 
+    <input type="number" id="edad" min="0"><br><br>
+    <label for="peso">Peso:</label>
+    <input type="number" id="peso" min="0"><br><br>
+    <label for="estatura">Estatura:</label>
+    <input type="number" id="estatura" min="0"><br><br>
+    <button id="AgregarDatos" onclick="AgregarDatos()">Agregar</button>
+    <table id="Historial" border="1">
+        <tr>
+            <th>Nombre</th>
+            <th>Edad</th>
+            <th>Peso</th>
+            <th>IMC</th>
+        </tr>
+    </table>
+    <button id="guardarHistorial" onclick="guardarHistorial()">Guardar Historial</button><br><br>
+    <h2>Cargar Historial</h2>
+    <label for="archivo">Seleccione un archivo:</label>
+    <input type="file" name="archivo" onchange="leerHistorial(this)">
+</body>
+<script>
+// Este objeto llevará la cuenta de las citas de cada paciente
+var citasPorPaciente = {};
+// Este objeto llevará la cuenta de los pacientes
+var pacientes = {};
+
+// Esta función agrega los datos ingresados a la tabla de historial
+function AgregarDatos() {
+    var nombre = document.getElementById("Nombre").value;
+    var edad = document.getElementById("edad").value;
+    var peso = document.getElementById("peso").value;
+    var estatura = document.getElementById("estatura").value;
+    // Verifica que todos los campos estén llenos
+    if(nombre === "" || edad === "" || peso === "" || estatura === "") {
+        alert("Por favor, rellene todos los campos.");
+        return;
+    }
+    // Verifica que no se hayan registrado más de 10 citas para el paciente
+    if (!citasPorPaciente[nombre]) {
+        citasPorPaciente[nombre] = 0;
+    }
+    if (citasPorPaciente[nombre] >= 10) {
+        alert("Ya se han registrado 10 citas para este paciente.");
+        return;
+    }
+    // Verifica que no se hayan registrado más de 10 pacientes
+    if (!pacientes[nombre]) {
+        pacientes[nombre] = true;
+        if (Object.keys(pacientes).length > 10) {
+            alert("Ya se han registrado 10 pacientes.");
+            delete pacientes[nombre];
+            return;
+        }
+    }
+    citasPorPaciente[nombre]++;
+    // Calcula el IMC y agrega una nueva fila a la tabla
+    var imc = peso / (estatura * estatura);
+    var fila = document.createElement("tr");
+    var columna1 = document.createElement("td");
+    columna1.innerHTML = nombre;
+    var columna2 = document.createElement("td");
+    columna2.innerHTML = edad;
+    var columna3 = document.createElement("td");
+    columna3.innerHTML = peso;
+    var columna4 = document.createElement("td");
+    columna4.innerHTML = imc;
+    fila.appendChild(columna1);
+    fila.appendChild(columna2);
+    fila.appendChild(columna3);
+    fila.appendChild(columna4);
+    document.getElementById("Historial").appendChild(fila);
+}
+
+// Esta función guarda los datos de la tabla en un archivo de texto
+function guardarHistorial() {
+    var historial = document.getElementById("Historial");
+    var datos = [];
+    for (var i = 1; i < historial.rows.length; i++) { // Comenzamos en 1 para omitir la fila de encabezado
+        var fila = historial.rows[i];
+        var datosFila = [];
+        for (var j = 0; j < fila.cells.length; j++) {
+            var celda = fila.cells[j];
+            datosFila.push(celda.innerHTML);
+        }
+        datos.push(datosFila.join(",") ); // Unimos los datos de la fila con comas y añadimos un salto de línea
+    }
+    var blob = new Blob(datos, {type: "text/plain"}); // Creamos el Blob a partir del array de datos
+    var link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "historial.txt";
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Esta función carga los datos de un archivo de texto en la tabla
+function leerHistorial(archivo) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var datos = e.target.result.split("\\n");
+            var historial = document.getElementById("Historial");
+            historial.innerHTML = "";
+            for (var i = 0; i < datos.length; i++) {
+                var filaDatos = datos[i].split(",");
+                var fila = document.createElement("tr");
+                for (var j = 0; j < filaDatos.length; j++) {
+                    var columna = document.createElement("td");
+                    columna.innerHTML = filaDatos[j];
+                    fila.appendChild(columna);
+                }
+                historial.appendChild(fila);
+            }
+        } catch (error) {
+            alert("Error al leer el archivo: " + error.message);
+        }
+    };
+    reader.readAsText(archivo.files[0]);
+}
+</script>
+</html>
+
+
+
+

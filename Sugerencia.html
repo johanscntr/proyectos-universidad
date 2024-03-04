@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tabla del Asado y Compras</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+      width: 80%;
+      background-color: rgb(166, 142, 184);
+      border: 1px solid #dddddd;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+    }
+    th {
+      background-color: #dddddd;
+      font-weight: bold;
+      text-align: center;
+    }
+    td {
+      text-align: center;
+    }
+    .btn-eliminar {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      transition-duration: 0.4s;
+      border-radius: 4px;
+    }
+    .btn-eliminar:hover {
+    background-color: #ff3333;
+  }
+  h1 {
+    text-align: center;
+    margin-top: 30px;
+  }
+  form {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    border-radius: 4px;
+  }
+  button:hover {
+    background-color: #45a049;
+  }
+  </style>
+</head>
+
+<link rel="shortcut icon" href="OIP (1).jpeg">
+<body>
+  <h1>Tabla del asado</h1>
+  <form id="myForm">
+    <label for="Personas">Personas:</label>
+    <input type="number" id="dato6" required><br><br>
+    <label for="Alimento">Alimento:</label>
+    <input type="text" id="dato1" required><br><br>
+    <label for="Presentacion">Presentacion:</label>
+    <input type="text" id="dato2" required><br><br>
+    <label for="Porpersona">Por persona:</label>
+    <input type="number" id="dato3" required><br><br>
+    <label for="Unidades">Unidades por Presentacion:</label>
+    <input type="number" id="dato5" required><br><br>
+    <label for="Valor">Valor:</label>
+    <input type="number" id="dato4" required><br><br>
+    <button type="button" onclick="agregarFila()">Agregar</button>
+  </form>
+  <table id="tabla">
+    <tr>
+       <th colspan="4">Menu</th>
+       <th rowspan="2">Accion</th>
+    </tr>
+    <tr>
+      <th>Alimento</th>
+      <th>Presentacion</th>
+      <th>Por persona</th>
+      <th>Unidades</th>
+    </tr>
+  </table>
+  <!-- Tabla de compras -->
+  <h1>Tabla de compras</h1>
+  <table id="tablaCompras">
+    <tr>
+      <th colspan="3">Formas de compra</th>
+      <th rowspan="2">Valor</th>
+    </tr>
+    <tr>
+      <th>Alimento</th>
+      <th>Presentacion</th>
+      <th>Unidades</th>
+      
+    </tr>
+  </table>
+  <!-- Tabla que calcula total sobrante y valor por persona -->
+  <h1>Tabla Calculadora</h1>
+  <table id="tablaCalculadora">
+    <tr>
+      <th></th>
+      <th colspan="3">Cantidades</th>
+      <th colspan="2">Valores</th>
+    </tr>
+    <tr>
+      <th>Alimento</th>
+      <th>A Usar</th>
+      <th>A Comprar</th>
+      <th>Sobrante</th>
+      <th>Valor</th>
+      <th>Total</th>
+    </tr>
+  </table>
+  <h2>Costo total del asado: <span id="costoTotal"></span></h2>
+  <h2>Aporte por persona: <span id="aportePersona"></span></h2>
+  <!-- Código JavaScript -->
+  <script>
+  var data = [];
+  var personas = 0;
+  
+  function agregarFila() {
+    var Alimento = document.getElementById("dato1").value;
+    var Presentacion = document.getElementById("dato2").value;
+    var Porpersona = parseFloat(document.getElementById("dato3").value);
+    var Unidades = parseFloat(document.getElementById("dato5").value);
+    var Valor = parseFloat(document.getElementById("dato4").value);
+    
+    if (personas === 0) {
+      personas = parseFloat(document.getElementById("dato6").value);
+    }
+    
+    data.push([Alimento, Presentacion, Porpersona, Unidades, Valor]);
+    
+    var tabla = document.getElementById("tabla");
+    var fila = tabla.insertRow();
+    
+    var celdaAlimento = fila.insertCell(0);
+    celdaAlimento.innerHTML = Alimento;
+    
+    var celdaPresentacion = fila.insertCell(1);
+    celdaPresentacion.innerHTML = Presentacion;
+    
+    var celdaPorpersona = fila.insertCell(2);
+    celdaPorpersona.innerHTML = Porpersona;
+    
+    var celdaUnidades = fila.insertCell(3);
+    celdaUnidades.innerHTML = Unidades;
+    
+    var celdaEliminar = fila.insertCell(4);
+    var botonEliminar = document.createElement("button");
+    botonEliminar.innerHTML = "Eliminar";
+    botonEliminar.onclick = function() {
+      tabla.deleteRow(fila.rowIndex);
+      data.splice(fila.rowIndex-2, 1);
+      tablaCompras.deleteRow(fila.rowIndex);
+      tablaCalculadora.deleteRow(fila.rowIndex);
+    };
+    celdaEliminar.appendChild(botonEliminar);
+    
+    var tablaCompras = document.getElementById("tablaCompras");
+    var filaCompras = tablaCompras.insertRow();
+    
+    var celdaAlimentoCompras = filaCompras.insertCell(0);
+    celdaAlimentoCompras.innerHTML = Alimento;
+    
+    var celdaPresentacionCompras = filaCompras.insertCell(1);
+    celdaPresentacionCompras.innerHTML = Presentacion;
+    
+    var celdaUnidadCompras = filaCompras.insertCell(2);
+    celdaUnidadCompras.innerHTML = Unidades;
+    
+    var celdaValorCompras = filaCompras.insertCell(3);
+    celdaValorCompras.innerHTML = Valor;
+    
+    var tablaCalculadora = document.getElementById("tablaCalculadora");
+    var filaCalculadora = tablaCalculadora.insertRow();
+    
+    var celdaAlimentoCalculadora = filaCalculadora.insertCell(0);
+    celdaAlimentoCalculadora.innerHTML = Alimento;
+    
+    var celdaAUsarCalculadora = filaCalculadora.insertCell(1);
+    celdaAUsarCalculadora.innerHTML = Porpersona * personas;
+    
+    var celdaAComprarCalculadora = filaCalculadora.insertCell(2);
+    celdaAComprarCalculadora.innerHTML = Math.ceil((Porpersona * personas) / Unidades);
+    
+    var celdaSobranteCalculadora = filaCalculadora.insertCell(3);
+    celdaSobranteCalculadora.innerHTML = (Unidades * celdaAComprarCalculadora.innerHTML) - (personas * Porpersona);
+    
+    var celdaValorCalculadora = filaCalculadora.insertCell(4);
+    celdaValorCalculadora.innerHTML = Valor;
+    
+    var celdaTotalCalculadora = filaCalculadora.insertCell(5);
+    celdaTotalCalculadora.innerHTML = Math.ceil((Porpersona * personas) / Unidades) * Valor;
+    
+    document.getElementById("myForm").reset();
+    
+    var tablaCalculadora = document.getElementById("tablaCalculadora");
+    var filas = tablaCalculadora.rows;
+    var totalSuma = 0;
+    for (var i = 1; i < filas.length; i++) {
+      var celdaTotal = filas[i].cells[5];
+      var valorTotal = parseFloat(celdaTotal.innerHTML);
+      if (!isNaN(valorTotal)) {
+        totalSuma += valorTotal;
+      }
+    }
+    document.getElementById("costoTotal").innerText = totalSuma.toFixed(2);
+    var aportePersona = totalSuma / personas;
+    document.getElementById("aportePersona").innerText = aportePersona.toFixed(2);
+  }
+  </script>
+</body>
+</html>
